@@ -989,14 +989,25 @@ window.handleLogin = async function() {
     }
 
     // Crear o loguear usuario
+    const password = 'MO2026_' + code.replace('-','');
     let userCred;
     try {
-      userCred = await createUserWithEmailAndPassword(auth, email, code + '_MO2026');
+      userCred = await createUserWithEmailAndPassword(auth, email, password);
     } catch (e) {
       if (e.code === 'auth/email-already-in-use') {
-        userCred = await signInWithEmailAndPassword(auth, email, code + '_MO2026');
+        try {
+          userCred = await signInWithEmailAndPassword(auth, email, password);
+        } catch (e2) {
+          errEl.textContent = 'Email ya registrado con otro código. Usá "Entrar con mi email".';
+          errEl.classList.add('visible');
+          document.getElementById('login-btn-text').textContent = 'Ingresar';
+          return;
+        }
       } else {
-        throw e;
+        errEl.textContent = 'Error Firebase: ' + e.code;
+        errEl.classList.add('visible');
+        document.getElementById('login-btn-text').textContent = 'Ingresar';
+        return;
       }
     }
 
@@ -1014,7 +1025,7 @@ window.handleLogin = async function() {
     document.getElementById('login-btn-text').textContent = 'Ingresar';
   } catch (error) {
     console.error(error);
-    errEl.textContent = 'Error al ingresar. Revisá tu email e intentá de nuevo.';
+    errEl.textContent = 'Error: ' + (error.code || error.message);
     errEl.classList.add('visible');
     document.getElementById('login-btn-text').textContent = 'Ingresar';
   }
