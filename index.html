@@ -633,7 +633,10 @@ body {
       </div>
     </div>
 
-    <button class="btn btn-ghost" onclick="handleLogout()" style="margin-top:16px;color:var(--gris)">Cerrar sesión</button>
+    <button id="btn-instalar-app" class="btn btn-secondary hidden" onclick="instalarApp()" style="margin-top:8px">
+      📲 Instalar app en mi celular
+    </button>
+    <button class="btn btn-ghost" onclick="handleLogout()" style="margin-top:8px;color:var(--gris)">Cerrar sesión</button>
   </div>
 </div>
 
@@ -1149,7 +1152,7 @@ auth.onAuthStateChanged( async (user) => {
     currentUser = user;
     const userRef = db.collection('usuarios').doc(user.uid);
     const snap = await userRef.get();
-    if (snap.exists()) {
+    if (snap.exists) {
       const data = snap.data();
       document.getElementById('home-name').textContent = data.nombre || user.email;
       if (data.email === ADMIN_EMAIL) {
@@ -1729,27 +1732,42 @@ window.showToast = function(msg, duration = 3000) {
 <!-- PWA Install Banner -->
 <script>
 var deferredPrompt = null;
+
 window.addEventListener('beforeinstallprompt', function(e) {
   e.preventDefault();
   deferredPrompt = e;
   if (!window.matchMedia('(display-mode: standalone)').matches) {
     document.getElementById('install-banner').classList.remove('hidden');
+    var btnInstalar = document.getElementById('btn-instalar-app');
+    if (btnInstalar) btnInstalar.classList.remove('hidden');
   }
 });
+
+function instalarApp() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function() {
+      deferredPrompt = null;
+      document.getElementById('install-banner').classList.add('hidden');
+      var btnInstalar = document.getElementById('btn-instalar-app');
+      if (btnInstalar) btnInstalar.classList.add('hidden');
+    });
+  }
+}
+
 document.getElementById('install-btn').addEventListener('click', function() {
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  deferredPrompt.userChoice.then(function() {
-    deferredPrompt = null;
-    document.getElementById('install-banner').classList.add('hidden');
-  });
+  instalarApp();
 });
+
 document.querySelector('.install-btn-no').addEventListener('click', function() {
   document.getElementById('install-banner').classList.add('hidden');
 });
+
 window.addEventListener('appinstalled', function() {
   document.getElementById('install-banner').classList.add('hidden');
   deferredPrompt = null;
+  var btnInstalar = document.getElementById('btn-instalar-app');
+  if (btnInstalar) btnInstalar.classList.add('hidden');
 });
 </script>
 </body>
