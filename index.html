@@ -1719,19 +1719,46 @@ window.showToast = function(msg, duration = 3000) {
 <!-- PWA Install Banner -->
 <script>
 var deferredPrompt = null;
+
+// Capturar evento nativo
 window.addEventListener('beforeinstallprompt', function(e) {
   e.preventDefault();
   deferredPrompt = e;
+  mostrarBanner();
+});
+
+function mostrarBanner() {
+  // No mostrar si ya está instalada
+  if (window.matchMedia('(display-mode: standalone)').matches) return;
+  if (window.navigator.standalone) return;
+  // No mostrar si ya la cerró antes
+  if (sessionStorage.getItem('banner-cerrado')) return;
   document.getElementById('install-banner').classList.remove('hidden');
-});
+}
+
+// Mostrar banner después de 2 segundos aunque no haya beforeinstallprompt
+setTimeout(function() {
+  mostrarBanner();
+}, 2000);
+
 document.getElementById('install-btn').addEventListener('click', function() {
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  deferredPrompt.userChoice.then(function() {
-    deferredPrompt = null;
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function() {
+      deferredPrompt = null;
+      document.getElementById('install-banner').classList.add('hidden');
+    });
+  } else {
+    // Instrucción manual si no hay prompt nativo
     document.getElementById('install-banner').classList.add('hidden');
-  });
+    alert('Para instalar: tocá los 3 puntos del navegador → "Agregar a pantalla de inicio"');
+  }
 });
+
+document.querySelector('.install-btn-no').addEventListener('click', function() {
+  sessionStorage.setItem('banner-cerrado', '1');
+});
+
 window.addEventListener('appinstalled', function() {
   document.getElementById('install-banner').classList.add('hidden');
   deferredPrompt = null;
