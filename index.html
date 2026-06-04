@@ -1710,20 +1710,25 @@ window.showToast = function(msg, duration = 3000) {
 };
 
 // ── PWA INSTALL ──
-let deferredPrompt;
+let deferredPrompt = null;
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
   deferredPrompt = e;
   document.getElementById('install-banner').classList.remove('hidden');
 });
 
-document.getElementById('install-btn')?.addEventListener('click', async () => {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
+document.getElementById('install-btn').addEventListener('click', () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(() => {
     deferredPrompt = null;
     document.getElementById('install-banner').classList.add('hidden');
-  }
+  });
+});
+
+window.addEventListener('appinstalled', () => {
+  document.getElementById('install-banner').classList.add('hidden');
+  deferredPrompt = null;
 });
 </script>
 
@@ -1733,7 +1738,7 @@ const manifest = {
   name: "El Ministerio Olvidado",
   short_name: "Ministerio Olvidado",
   description: "Formación para padres de adolescentes",
-  start_url: "/",
+  start_url: "./",
   display: "standalone",
   background_color: "#F7F4EF",
   theme_color: "#2D4A6B",
