@@ -1755,17 +1755,8 @@ document.head.appendChild(link);
 <!-- Service Worker para PWA instalable -->
 <script>
 if ('serviceWorker' in navigator) {
-  const swCode = `
-    const CACHE = 'ministerio-olvidado-v1';
-    self.addEventListener('install', e => { self.skipWaiting(); });
-    self.addEventListener('activate', e => { self.clients.claim(); });
-    self.addEventListener('fetch', e => {
-      if (e.request.method !== 'GET') return;
-      e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
-    });
-  `;
-  const swBlob = new Blob([swCode], { type: 'application/javascript' });
-  const swUrl = URL.createObjectURL(swBlob);
-  navigator.serviceWorker.register(swUrl).catch(() => {});
+  navigator.serviceWorker.register('/sw.js')
+    .then(() => console.log('SW registrado'))
+    .catch(e => console.log('SW error:', e));
 }
 </script>
