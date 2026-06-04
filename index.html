@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#2D4A6B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ministerio Olvidado">
+<title>El Ministerio Olvidado</title>
+<link rel="manifest" href="#" id="manifest-placeholder">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --azul: #2D4A6B;
+  --azul-claro: #4A6E9A;
+  --terracota: #C4714A;
+  --terracota-claro: #D4855E;
+  --fondo: #F7F4EF;
+  --texto: #2C2C2C;
+  --salvia: #7A9E7E;
+  --blanco: #FFFFFF;
+  --gris: #9A9590;
+  --borde: #E4E0DA;
+  --card-sombra: 0 2px 16px rgba(45,74,107,0.08);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--fondo);
+  color: var(--texto);
+  min-height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+  overflow-x: hidden;
+}
+
+/* ── UTILS ── */
+.hidden { display: none !important; }
+.screen { min-height: 100vh; display: flex; flex-direction: column; }
+
+/* ── HEADER HERO ── */
+.hero-header {
+  background: var(--azul);
+  padding: 52px 24px 28px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.hero-header::before {
+  content: '';
+  position: absolute;
+  top: -70px; right: -70px;
+  width: 220px; height: 220px;
+  border-radius: 50%;
+  background: rgba(196,113,74,0.12);
+}
+.hero-header::after {
+  content: '';
+  position: absolute;
+  bottom: -40px; left: -40px;
+  width: 140px; height: 140px;
+  border-radius: 50%;
+  background: rgba(122,158,126,0.1);
+}
+.logo-box {
+  width: 48px; height: 48px;
+  background: var(--terracota);
+  border-radius: 13px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 16px;
+  position: relative; z-index: 1;
+}
+.logo-box svg { width: 26px; height: 26px; fill: white; }
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: white;
+  line-height: 1.2;
+  position: relative; z-index: 1;
+}
+.hero-sub {
+  font-size: 11px;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-top: 5px;
+  font-weight: 300;
+  position: relative; z-index: 1;
+}
+.hero-greeting { font-size: 11px; color: rgba(255,255,255,0.5); letter-spacing: 1px; text-transform: uppercase; }
+.hero-name { font-family: 'Playfair Display', serif; font-size: 22px; color: white; margin-top: 3px; position: relative; z-index:1;}
+
+/* ── BODY ── */
+.body-pad { padding: 24px 20px 40px; flex: 1; }
+
+/* ── FORMS ── */
+.field-group { margin-bottom: 16px; }
+.field-label { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--gris); font-weight: 500; margin-bottom: 7px; display: block; }
+.field {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid var(--borde);
+  border-radius: 12px;
+  background: var(--blanco);
+  font-size: 15px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--texto);
+  outline: none;
+  transition: border-color .2s;
+}
+.field:focus { border-color: var(--azul); }
+
+/* ── BUTTONS ── */
+.btn {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 14px;
+  font-size: 15px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity .2s, transform .1s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn:active { transform: scale(.98); opacity: .9; }
+.btn-primary { background: var(--azul); color: white; }
+.btn-secondary { background: transparent; color: var(--azul); border: 1.5px solid var(--azul); }
+.btn-terracota { background: var(--terracota); color: white; }
+.btn-sm {
+  width: auto;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-size: 13px;
+}
+.btn-ghost { background: transparent; color: var(--gris); font-size: 13px; padding: 8px 0; width: auto; }
+
+/* ── DIVIDER ── */
+.divider { display: flex; align-items: center; gap: 12px; color: var(--gris); font-size: 12px; margin: 16px 0; }
+.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--borde); }
+
+/* ── HINT ── */
+.hint { font-size: 12px; color: var(--terracota); text-align: center; margin-top: 6px; }
+
+/* ── SECTION TITLE ── */
+.sec-title { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gris); font-weight: 500; margin-bottom: 10px; margin-top: 6px; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--blanco);
+  border-radius: 16px;
+  padding: 18px 20px;
+  box-shadow: var(--card-sombra);
+  border: 1px solid rgba(228,224,218,0.5);
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: transform .15s, box-shadow .15s;
+  display: flex; align-items: center; gap: 16px;
+}
+.card:active { transform: scale(.99); }
+.card-icon {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.ci-chat { background: rgba(45,74,107,0.08); }
+.ci-test { background: rgba(196,113,74,0.1); }
+.ci-prog { background: rgba(122,158,126,0.12); }
+.ci-admin { background: rgba(196,113,74,0.08); }
+.card-text h3 { font-size: 15px; font-weight: 500; color: var(--texto); margin-bottom: 2px; }
+.card-text p { font-size: 12px; color: var(--gris); line-height: 1.4; }
+.card-arrow { margin-left: auto; color: var(--borde); font-size: 20px; flex-shrink: 0; }
+
+/* ── PROGRESS ── */
+.prog-bar-wrap { background: #F0EDE8; border-radius: 8px; height: 6px; margin-top: 8px; overflow: hidden; }
+.prog-bar { height: 100%; border-radius: 8px; background: linear-gradient(90deg, var(--salvia), var(--azul-claro)); transition: width .4s; }
+
+/* ── CHAT ── */
+.chat-header {
+  background: var(--azul);
+  padding: 52px 20px 18px;
+  display: flex; align-items: center; gap: 12px;
+  flex-shrink: 0;
+}
+.back-btn {
+  width: 34px; height: 34px;
+  border-radius: 9px;
+  background: rgba(255,255,255,0.12);
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 20px; cursor: pointer; flex-shrink: 0;
+  border: none;
+}
+.chat-header-text h2 { font-size: 16px; color: white; font-weight: 500; }
+.chat-header-text p { font-size: 11px; color: rgba(255,255,255,0.5); }
+.chat-messages {
+  flex: 1;
+  padding: 20px 16px;
+  display: flex; flex-direction: column; gap: 12px;
+  overflow-y: auto;
+  background: var(--fondo);
+}
+.msg {
+  max-width: 84%;
+  padding: 12px 16px;
+  border-radius: 18px;
+  font-size: 14px;
+  line-height: 1.55;
+}
+.msg.bot {
+  background: var(--blanco);
+  color: var(--texto);
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  align-self: flex-start;
+}
+.msg.user {
+  background: var(--azul);
+  color: white;
+  border-bottom-right-radius: 4px;
+  align-self: flex-end;
+}
+.msg-typing { display: flex; gap: 5px; align-items: center; padding: 14px 18px; }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gris); animation: bounce .9s infinite; }
+.dot:nth-child(2) { animation-delay: .15s; }
+.dot:nth-child(3) { animation-delay: .3s; }
+@keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+.chat-input-bar {
+  padding: 12px 16px;
+  background: var(--blanco);
+  border-top: 1px solid var(--borde);
+  display: flex; gap: 10px; align-items: center;
+  flex-shrink: 0;
+}
+.chat-input {
+  flex: 1;
+  padding: 11px 14px;
+  border: 1.5px solid var(--borde);
+  border-radius: 24px;
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  background: var(--fondo);
+  color: var(--texto);
+  outline: none;
+  resize: none;
+  max-height: 100px;
+}
+.chat-input:focus { border-color: var(--azul); }
+.send-btn {
+  width: 40px; height: 40px;
+  background: var(--terracota);
+  border: none;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0;
+  transition: background .2s;
+}
+.send-btn:disabled { background: var(--borde); }
+.send-btn svg { width: 17px; height: 17px; fill: white; }
+
+/* ── TESTS ── */
+.test-header {
+  background: var(--azul);
+  padding: 52px 20px 20px;
+  display: flex; align-items: center; gap: 12px;
+  flex-shrink: 0;
+}
+.test-body { padding: 24px 20px 40px; flex: 1; overflow-y: auto; }
+.test-card {
+  background: var(--blanco);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: var(--card-sombra);
+  border: 1px solid rgba(228,224,218,0.5);
+  margin-bottom: 14px;
+  cursor: pointer;
+  transition: transform .15s, border-color .2s;
+}
+.test-card:active { transform: scale(.99); }
+.test-card h3 { font-size: 15px; font-weight: 600; color: var(--texto); margin-bottom: 4px; }
+.test-card p { font-size: 12px; color: var(--gris); }
+.test-badge {
+  display: inline-block;
+  font-size: 10px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  margin-top: 8px;
+  font-weight: 500;
+  letter-spacing: .5px;
+}
+.badge-pending { background: rgba(196,113,74,0.1); color: var(--terracota); }
+.badge-done { background: rgba(122,158,126,0.12); color: #5A8A5E; }
+
+/* ── QUIZ ── */
+.quiz-progress { height: 4px; background: var(--borde); }
+.quiz-progress-fill { height: 100%; background: var(--terracota); transition: width .3s; }
+.quiz-body { padding: 28px 20px 40px; flex: 1; overflow-y: auto; }
+.quiz-num { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--gris); margin-bottom: 8px; }
+.quiz-q { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--texto); line-height: 1.4; margin-bottom: 24px; }
+.option-btn {
+  width: 100%;
+  padding: 15px 18px;
+  border: 1.5px solid var(--borde);
+  border-radius: 13px;
+  background: var(--blanco);
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--texto);
+  cursor: pointer;
+  text-align: left;
+  margin-bottom: 10px;
+  transition: all .2s;
+  line-height: 1.4;
+}
+.option-btn:hover { border-color: var(--azul); background: rgba(45,74,107,0.03); }
+.option-btn.selected { border-color: var(--azul); background: rgba(45,74,107,0.06); color: var(--azul); font-weight: 500; }
+.option-btn.correct { border-color: var(--salvia); background: rgba(122,158,126,0.1); color: #4A7A4E; }
+.option-btn.wrong { border-color: #C47A6A; background: rgba(196,122,106,0.08); color: #A05540; }
+
+/* ── RESULT ── */
+.result-box {
+  background: var(--blanco);
+  border-radius: 20px;
+  padding: 32px 24px;
+  text-align: center;
+  box-shadow: var(--card-sombra);
+  margin: 24px 20px;
+}
+.result-score { font-family: 'Playfair Display', serif; font-size: 56px; color: var(--azul); font-weight: 700; }
+.result-label { font-size: 14px; color: var(--gris); margin-top: 4px; }
+.result-msg { font-size: 15px; color: var(--texto); margin-top: 16px; line-height: 1.5; }
+
+/* ── ADMIN ── */
+.admin-header {
+  background: var(--azul);
+  padding: 52px 20px 20px;
+  display: flex; align-items: center; gap: 12px;
+  flex-shrink: 0;
+}
+.code-item {
+  background: var(--blanco);
+  border-radius: 13px;
+  padding: 14px 18px;
+  margin-bottom: 10px;
+  display: flex; align-items: center; justify-content: space-between;
+  box-shadow: var(--card-sombra);
+  border: 1px solid rgba(228,224,218,0.5);
+}
+.code-val { font-family: monospace; font-size: 15px; font-weight: 600; color: var(--azul); letter-spacing: 1px; }
+.code-status { font-size: 11px; padding: 3px 10px; border-radius: 20px; }
+.status-active { background: rgba(122,158,126,0.12); color: #4A8A4E; }
+.status-used { background: rgba(150,150,150,0.1); color: var(--gris); }
+
+/* ── ERROR ── */
+.error-msg { font-size: 13px; color: #C45A40; background: rgba(196,90,64,0.08); padding: 10px 14px; border-radius: 10px; margin-bottom: 12px; display: none; }
+.error-msg.visible { display: block; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%; transform: translateX(-50%);
+  background: var(--texto);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 24px;
+  font-size: 13px;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity .3s;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; }
+
+/* ── INSTALL BANNER ── */
+.install-banner {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--azul);
+  color: white;
+  padding: 14px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+  z-index: 9000;
+  max-width: 480px;
+  margin: 0 auto;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+}
+.install-banner p { font-size: 13px; line-height: 1.4; flex: 1; }
+.install-banner strong { display: block; font-size: 14px; }
+.install-banner-btns { display: flex; gap: 8px; flex-shrink: 0; }
+.install-btn-yes { background: var(--terracota); color: white; border: none; padding: 9px 16px; border-radius: 10px; font-size: 13px; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+.install-btn-no { background: rgba(255,255,255,0.15); color: white; border: none; padding: 9px 12px; border-radius: 10px; font-size: 13px; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.fade-in { animation: fadeIn .3s ease forwards; }
+
+/* ── LOADING ── */
+.spinner {
+  width: 36px; height: 36px;
+  border: 3px solid var(--borde);
+  border-top-color: var(--azul);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  margin: 40px auto;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════ SCREENS ═══════════════════════════════ -->
+
+<!-- SCREEN: LOGIN -->
+<div id="screen-login" class="screen">
+  <div class="hero-header">
+    <div class="logo-box">
+      <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 2.61 1.41 4.88 3.5 6.18V17h7v-1.82C17.59 13.88 19 11.61 19 9c0-3.87-3.13-7-7-7zm0 2c2.76 0 5 2.24 5 5 0 2.05-1.23 3.81-3 4.58V15H10v-1.42C8.23 12.81 7 11.05 7 9c0-2.76 2.24-5 5-5zm-1 13h2v2h-2zm0 3h2v2h-2z"/></svg>
+    </div>
+    <div class="hero-title">El Ministerio<br>Olvidado</div>
+    <div class="hero-sub">Formación para padres de adolescentes</div>
+  </div>
+  <div class="body-pad">
+    <div id="login-error" class="error-msg"></div>
+    <div class="field-group">
+      <label class="field-label">Tu email</label>
+      <input id="login-email" class="field" type="email" placeholder="nombre@email.com" autocomplete="email">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Código de acceso</label>
+      <input id="login-code" class="field" type="text" placeholder="XXXX-XXXX" autocomplete="off" style="letter-spacing:2px;text-transform:uppercase">
+    </div>
+    <p class="hint" style="margin-bottom:16px">¿Aún no tenés acceso? Contactá a Pablo para obtenerlo</p>
+    <button class="btn btn-primary" onclick="handleLogin()">
+      <span id="login-btn-text">Ingresar</span>
+    </button>
+    <div class="divider">o si ya ingresaste antes</div>
+    <button class="btn btn-secondary" onclick="handleReturning()">Entrar con mi email</button>
+  </div>
+</div>
+
+<!-- SCREEN: HOME -->
+<div id="screen-home" class="screen hidden">
+  <div class="hero-header">
+    <div class="hero-greeting">Bienvenido de nuevo</div>
+    <div class="hero-name" id="home-name">—</div>
+  </div>
+  <div class="body-pad">
+    <div class="sec-title">¿Qué querés hacer hoy?</div>
+
+    <div class="card" onclick="showScreen('screen-chat')">
+      <div class="card-icon ci-chat">💬</div>
+      <div class="card-text">
+        <h3>Consultá al manual</h3>
+        <p>Chat con IA basado en el contenido del libro</p>
+      </div>
+      <div class="card-arrow">›</div>
+    </div>
+
+    <div class="card" onclick="showScreen('screen-tests')">
+      <div class="card-icon ci-test">📋</div>
+      <div class="card-text">
+        <h3>Autoevaluación</h3>
+        <p>Medí en qué área necesitás crecer como padre</p>
+      </div>
+      <div class="card-arrow">›</div>
+    </div>
+
+    <div class="sec-title" style="margin-top:8px">Tu progreso</div>
+    <div class="card" style="flex-direction:column;align-items:flex-start;gap:10px;cursor:default">
+      <div style="display:flex;align-items:center;gap:12px;width:100%">
+        <div class="card-icon ci-prog" style="width:38px;height:38px;font-size:17px">📖</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:500" id="prog-label">Cargando...</div>
+          <div style="font-size:11px;color:var(--gris);margin-top:1px" id="prog-sub"></div>
+        </div>
+      </div>
+      <div class="prog-bar-wrap" style="width:100%">
+        <div class="prog-bar" id="prog-bar" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div id="admin-card-wrap" class="hidden">
+      <div class="sec-title" style="margin-top:8px">Administración</div>
+      <div class="card" onclick="showScreen('screen-admin')">
+        <div class="card-icon ci-admin">🔑</div>
+        <div class="card-text">
+          <h3>Panel de acceso</h3>
+          <p>Generá y gestioná códigos de acceso</p>
+        </div>
+        <div class="card-arrow">›</div>
+      </div>
+    </div>
+
+    <button class="btn btn-ghost" onclick="handleLogout()" style="margin-top:16px;color:var(--gris)">Cerrar sesión</button>
+  </div>
+</div>
+
+<!-- SCREEN: CHAT -->
+<div id="screen-chat" class="screen hidden">
+  <div class="chat-header">
+    <button class="back-btn" onclick="showScreen('screen-home')">‹</button>
+    <div class="chat-header-text">
+      <h2>Consultá el manual</h2>
+      <p>Basado en "El Ministerio Olvidado"</p>
+    </div>
+  </div>
+  <div class="chat-messages" id="chat-messages">
+    <div class="msg bot fade-in">
+      Hola. Soy tu asistente basado en el manual <em>El Ministerio Olvidado</em>. Podés preguntarme sobre cualquier tema del libro: comunicación con tu hijo, autoridad, vida espiritual, crisis, redes sociales, y mucho más.<br><br>¿Qué situación querés trabajar hoy?
+    </div>
+  </div>
+  <div class="chat-input-bar">
+    <textarea id="chat-input" class="chat-input" placeholder="Escribí tu consulta..." rows="1"></textarea>
+    <button class="send-btn" id="send-btn" onclick="sendMessage()">
+      <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- SCREEN: TESTS LIST -->
+<div id="screen-tests" class="screen hidden">
+  <div class="test-header">
+    <button class="back-btn" onclick="showScreen('screen-home')">‹</button>
+    <div class="chat-header-text">
+      <h2>Autoevaluaciones</h2>
+      <p>Elegí una área para evaluarte</p>
+    </div>
+  </div>
+  <div class="test-body" id="tests-list">
+    <!-- generated by JS -->
+  </div>
+</div>
+
+<!-- SCREEN: QUIZ -->
+<div id="screen-quiz" class="screen hidden">
+  <div class="test-header">
+    <button class="back-btn" onclick="showScreen('screen-tests')">‹</button>
+    <div class="chat-header-text">
+      <h2 id="quiz-title">Test</h2>
+      <p id="quiz-sub">Pregunta 1 de 5</p>
+    </div>
+  </div>
+  <div class="quiz-progress"><div class="quiz-progress-fill" id="quiz-prog-fill"></div></div>
+  <div class="quiz-body">
+    <div id="quiz-num" class="quiz-num"></div>
+    <div id="quiz-q" class="quiz-q"></div>
+    <div id="quiz-options"></div>
+    <button id="quiz-next-btn" class="btn btn-primary hidden" onclick="nextQuestion()" style="margin-top:16px">Siguiente</button>
+  </div>
+</div>
+
+<!-- SCREEN: RESULT -->
+<div id="screen-result" class="screen hidden">
+  <div class="test-header">
+    <button class="back-btn" onclick="showScreen('screen-tests')">‹</button>
+    <div class="chat-header-text">
+      <h2>Resultado</h2>
+      <p id="result-test-name"></p>
+    </div>
+  </div>
+  <div style="flex:1;overflow-y:auto">
+    <div class="result-box">
+      <div class="result-score" id="result-score"></div>
+      <div class="result-label">de respuestas correctas</div>
+      <div class="result-msg" id="result-msg"></div>
+    </div>
+    <div style="padding:0 20px 40px">
+      <button class="btn btn-primary" onclick="showScreen('screen-tests')">Ver otros tests</button>
+      <button class="btn btn-ghost" onclick="showScreen('screen-home')" style="margin-top:8px;width:100%;text-align:center">Volver al inicio</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN: ADMIN -->
+<div id="screen-admin" class="screen hidden">
+  <div class="admin-header">
+    <button class="back-btn" onclick="showScreen('screen-home')">‹</button>
+    <div class="chat-header-text">
+      <h2>Panel de acceso</h2>
+      <p>Gestioná los códigos</p>
+    </div>
+  </div>
+  <div class="body-pad">
+    <button class="btn btn-terracota" onclick="generateCode()" style="margin-bottom:20px">
+      + Generar nuevo código
+    </button>
+    <div class="sec-title">Códigos activos</div>
+    <div id="codes-list">
+      <div class="spinner"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- INSTALL BANNER -->
+<div class="install-banner hidden" id="install-banner">
+  <p><strong>Instalá la app</strong>Accedé sin internet, desde tu pantalla de inicio</p>
+  <div class="install-banner-btns">
+    <button class="install-btn-yes" id="install-btn">Instalar</button>
+    <button class="install-btn-no" onclick="document.getElementById('install-banner').classList.add('hidden')">Ahora no</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SCRIPTS ═══════════════════════════════ -->
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+
+// ── CONFIG ──
+const firebaseConfig = {
+  apiKey: "AIzaSyAC3U5pCDOQ4i5YBeb_bq5oa-wg5e1fyUk",
+  authDomain: "ministerio-olvidado.firebaseapp.com",
+  projectId: "ministerio-olvidado",
+  storageBucket: "ministerio-olvidado.firebasestorage.app",
+  messagingSenderId: "208624877841",
+  appId: "1:208624877841:web:41e7cc42a4cb8bd4c28cb0"
+};
+
+const GROQ_KEY = "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";
+const ADMIN_EMAIL = "krolikowskapablo@gmail.com"; // ← CAMBIÁ por tu email
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+// ── STATE ──
+let currentUser = null;
+let chatHistory = [];
+let currentTest = null;
+let currentQ = 0;
+let userAnswers = [];
+
+// ── CONTEXT DEL MANUAL (resumido para el prompt) ──
+const MANUAL_CONTEXT = `
+Sos el asistente de "El Ministerio Olvidado", un manual bíblico y práctico para padres de adolescentes escrito por Pablo.
+Respondé ÚNICAMENTE con información del manual. No inventés ni salgas del contenido del libro.
+Respondé en español, con calidez pastoral, de forma práctica y concisa (máximo 4 párrafos).
+Si no encontrás la respuesta en el manual, decilo honestamente.
+
+CONTENIDO DEL MANUAL — 10 PARTES:
+
+PARTE 1 — FUNDAMENTOS:
+- La responsabilidad espiritual primaria de los padres (Deuteronomio 6:4-7, el Shemá). El hogar es el espacio primario de formación en la fe, no la iglesia.
+- La historia espiritual de los padres afecta la crianza. Patrones generacionales. La gracia rompe ciclos.
+- Discipular es ofrecer tu propia vida como referencia, no dar más información bíblica. Modelo: Jesús con los doce.
+- Diferencia entre control (gestiona por miedo/poder), disciplina (paideia: formación del carácter) y formación (brújula interna propia).
+- El rol de la iglesia es complementar, no reemplazar, al hogar. Tercerizar la formación espiritual no funciona.
+- La adolescencia no es rebelión inevitable sino etapa de transición y diseño creacional (Lucas 2:52, neurociencia).
+- Expectativas realistas: la soberanía del Espíritu (Juan 3:8). No proyectar el formato de la propia conversión.
+
+PARTE 2 — COMPRENDIENDO LA ADOLESCENCIA:
+- Reorganización emocional, cognitiva y espiritual. El cerebro adolescente está en formación (corteza prefrontal).
+- Búsqueda de identidad (Erikson): tarea central. Efesios 2:10: somos poiema (obra de arte) de Dios.
+- Necesidad de pertenencia: si el hogar no es seguro, el adolescente buscará pertenencia en otro lado.
+- Relación con la autoridad: rechazan la autoridad arbitraria e hipócrita, no la autoridad coherente.
+- Apatía espiritual: 5 causas reales: aburrimiento con formatos, desconexión fe-vida, fe heredada no apropiada, heridas en comunidad, sufrimiento no procesado.
+- Salud mental adolescente: depresión y ansiedad son condiciones médicas reales, no problemas espirituales. No espiritualizar síntomas. La fe y la terapia se complementan.
+- Señales de alerta: aislamiento sostenido, cambios en sueño/alimentación, autolesiones, pensamientos suicidas, cambio radical de amistades con secretismo.
+
+PARTE 3 — LA RELACIÓN PADRE-HIJO:
+- Construir confianza antes que exigir obediencia. La obediencia desde confianza es más duradera.
+- Comunicación efectiva: los mejores momentos son "de costado" (en el auto, cocinando). Brevedad es virtud. El tono importa.
+- Escuchar sin reaccionar (Santiago 1:19): la pausa deliberada es una herramienta espiritual.
+- Preguntar mejor: preguntas abiertas en lugar de juicios disfrazados. Modelo: Jesús con Bartimeo.
+- Manejar desacuerdos sin romper la relación. Atacar el problema, no a la persona. Usar "yo" en lugar de "vos".
+- Respeto mutuo en ambas direcciones. Los padres modelan el respeto que esperan recibir.
+
+PARTE 4 — AUTORIDAD Y LÍMITES:
+- Autoridad bíblica como servicio (Marcos 10:42-43), no dominio. La autoridad está al servicio del bien del hijo.
+- Autoridad sin autoritarismo. Estilo autoritativo (firme + afectuoso) vs autoritario (alta exigencia, bajo afecto).
+- Límites efectivos: claros, razonables, consistentes, con consecuencias proporcionales anunciadas de antemano.
+- Los límites deben evolucionar con la madurez del hijo.
+- Disciplina formativa vs descarga emocional. La disciplina funciona según la calidad de la relación.
+- Consistencia: el factor más importante. La inconsistencia produce ansiedad y más trasgresión.
+- Errores comunes: amenazar sin cumplir, negociar bajo presión, comparar con hermanos, disciplinar en público.
+
+PARTE 5 — VIDA ESPIRITUAL EN EL HOGAR:
+- Modelar la fe: los hijos observan cómo tratan el padre a sus enemigos, el dinero, el cónyuge, los errores.
+- Conversaciones espirituales naturales: surgen de crisis, preguntas honestas, películas, injusticias.
+- Orar sin forzar: brevedad y autenticidad. Pedir permiso para orar por el hijo comunica respeto.
+- Lectura bíblica realista: no requiere devocional diario. Compartir algo que llamó la atención al padre.
+- La iglesia como comunidad, no obligación. Hablar bien de las personas de la iglesia en casa.
+
+PARTE 6 — TEMAS CRÍTICOS:
+- Redes sociales: diseñadas para producir dependencia. Acordar límites negociados, no unilaterales. Modelar.
+- Amistades: el hijo también puede ser influencia positiva. Conocer a los amigos, no controlar.
+- Sexualidad y fe: el silencio es el problema. Educación sexual desde el diseño creacional, no solo el "no".
+- Identidad y autoestima: el valor intrínseco de Dios (Salmo 139) vs cultura de comparación y likes.
+- Dudas sobre Dios: responder con calma, honestidad y curiosidad. Las dudas pueden ser inicio de fe más sólida.
+
+PARTE 7 — CRISIS Y CONFLICTOS:
+- Cuando no quiere ir a la iglesia: asistencia ≠ fe. Modelo del padre pródigo: presencia expectante, no presión.
+- Apatía espiritual: ni presión ni rendición. Presencia cálida y no ansiosa. 1 Pedro 3:1.
+- Enojo y rebeldía: el enojo es comunicación. Mantener la calma es ejercicio espiritual.
+- Sufrimiento en silencio: presencia regular sin agenda. El adolescente silencioso puede estar en mayor riesgo.
+- Restaurar relación después del conflicto: la disculpa del padre es formativa, no muestra debilidad.
+
+PARTE 8 — LA PAREJA COMO EQUIPO:
+- Unidad conyugal: el conflicto crónico entre padres es predictor de problemas en los hijos.
+- Desacuerdos: procesarlos en privado, nunca usar al hijo como árbitro.
+- Decisiones conjuntas: el criterio es el bien del hijo, no quién gana el round.
+- Cuidar el equipo en tiempos de desgaste: hablar de cómo está cada uno, no solo del hijo.
+
+PARTE 9 — PREPARANDO A LOS PADRES:
+- Paciencia como herramienta espiritual: sembrar sin urgencia de resultados visibles (qawah, Isaías 40:31).
+- Formación espiritual de los padres: no podés dar lo que no tenés. Disciplinas espirituales adultas.
+- Cansancio parental: reconocerlo no es rendirse. Proteger el descanso. Pedir ayuda antes de la crisis.
+- Soltar progresivamente: la autonomía creciente del hijo es señal de que la formación funciona.
+
+PARTE 10 — IMPLEMENTACIÓN EN LA IGLESIA:
+- El vacío ministerial: los padres de adolescentes no son equipados de manera específica en casi ninguna iglesia.
+- Objetivos del ministerio: marco bíblico, herramientas prácticas, comunidad, puentes con ministerio de jóvenes.
+- Formato de reunión mensual de 90 minutos: check-in, reflexión bíblica, grupos pequeños, práctica concreta.
+- 12 temas para el primer año: de fundamentos a soltar, mes a mes.
+- Errores a evitar: convertirlo en grupo de queja, enfocarse en técnicas de control, no crear seguridad real.
+`;
+
+// ── TESTS DATA ──
+const TESTS = [
+  {
+    id: "comunicacion",
+    title: "Comunicación",
+    desc: "¿Cómo escuchás y hablás con tu hijo?",
+    parte: "Parte 3",
+    preguntas: [
+      {
+        q: "Cuando tu hijo adolescente te cuenta algo que te preocupa, ¿cuál es tu primera reacción habitual?",
+        opciones: ["Escuchar hasta el final antes de responder", "Interrumpirlo para dar mi opinión", "Empezar a pensar en la solución mientras él habla", "Preguntarle más para entender mejor"],
+        correcta: 0,
+        explicacion: "El manual (3.3) señala que escuchar sin reaccionar inmediatamente es la base de la comunicación efectiva. Santiago 1:19: 'sea pronto para oír, tardo para hablar'."
+      },
+      {
+        q: "¿En qué momento suelen ocurrir las conversaciones más significativas con tu hijo adolescente?",
+        opciones: ["En reuniones familiares formales", "De manera espontánea, 'de costado' (en el auto, cocinando)", "Cuando vos lo iniciás formalmente", "Nunca ocurren conversaciones significativas"],
+        correcta: 1,
+        explicacion: "El manual (3.2) explica que los mejores momentos de conversación no son los planificados sino los espontáneos, cuando el adolescente no siente que está siendo 'conversado'."
+      },
+      {
+        q: "¿Cuál de estas opciones representa una 'pregunta que abre' la conversación con un adolescente?",
+        opciones: ["'¿No te parece que hiciste mal?'", "'¿Cuántas veces te lo tengo que decir?'", "'¿Cómo te sentiste con eso?'", "'¿Por qué siempre hacés lo mismo?'"],
+        correcta: 2,
+        explicacion: "El manual (3.4) distingue entre preguntas que abren (genuinamente abiertas, sin respuesta predeterminada) y preguntas que cierran (juicios disfrazados). '¿Cómo te sentiste?' invita a reflexión real."
+      },
+      {
+        q: "Según el manual, ¿qué comunica una extensa 'sermoneada' del padre al hijo adolescente?",
+        opciones: ["Que el padre está muy comprometido con su formación", "Que el padre conoce bien la Biblia", "Que el hijo debe prestar mucha atención", "Que el padre no confía en la capacidad del hijo de llegar a sus propias conclusiones"],
+        correcta: 3,
+        explicacion: "El manual (3.2) advierte que el problema del sermón no es que sea falso, sino que no funciona: el adolescente está pensando en cómo terminar la conversación, no en el contenido."
+      },
+      {
+        q: "¿Qué hace la 'pausa deliberada' antes de responder a algo que dijo tu hijo?",
+        opciones: ["Le comunica al hijo que su tema no es importante", "Le comunica que fue escuchado y le da al padre tiempo para responder desde la calma", "Es una señal de que el padre no sabe qué contestar", "Puede hacer que el hijo sienta que lo estás ignorando"],
+        correcta: 1,
+        explicacion: "El manual (3.3) describe la pausa como una herramienta espiritual que cumple dos funciones: comunica al hijo que fue escuchado y le da al padre el tiempo para responder desde la calma en lugar de la reactividad."
+      }
+    ]
+  },
+  {
+    id: "autoridad",
+    title: "Autoridad y Límites",
+    desc: "¿Cómo ejercés tu autoridad en casa?",
+    parte: "Parte 4",
+    preguntas: [
+      {
+        q: "Según el manual, ¿cuál es la diferencia fundamental entre el modelo de autoridad 'gentil' y el modelo del reino?",
+        opciones: ["El modelo gentil usa la ley, el del reino usa la gracia", "El modelo gentil domina para su propio beneficio; el del reino sirve para el bien del otro", "El modelo gentil es suave, el del reino es firme", "No hay diferencia real, ambos producen obediencia"],
+        correcta: 1,
+        explicacion: "El manual (4.1) cita Marcos 10:42-43: Jesús confronta el modelo de dominio/poder con el modelo de servicio. La autoridad parental bíblica está al servicio del bien del hijo, no del padre."
+      },
+      {
+        q: "¿Qué estilo parental identifica la investigación como el que produce mejores resultados en el desarrollo de los hijos?",
+        opciones: ["Autoritario (alta exigencia, bajo afecto)", "Permisivo (baja exigencia, alto afecto)", "Autoritativo (alta exigencia, alto afecto)", "Negligente (baja exigencia, bajo afecto)"],
+        correcta: 2,
+        explicacion: "El manual (4.2) cita a Diana Baumrind: el estilo autoritativo —firme y afectuoso al mismo tiempo— produce los mejores resultados, incluyendo en el área de la fe."
+      },
+      {
+        q: "Un padre descubre que su regla de 'llegar a las 22hs' ya no corresponde a la madurez de su hijo de 17 años. ¿Qué recomienda el manual?",
+        opciones: ["Mantener la regla para no perder autoridad", "Eliminar todos los límites y confiar plenamente", "Revisar y ajustar el límite explícitamente, con una razón dada", "Dejar que el hijo decida solo"],
+        correcta: 2,
+        explicacion: "El manual (4.3) señala que los límites deben evolucionar con la madurez del hijo. Los límites que no evolucionan generan resentimiento. La revisión explícita con razones es la práctica recomendada."
+      },
+      {
+        q: "¿Qué efecto produce la inconsistencia parental —reglas que a veces se aplican y a veces no?",
+        opciones: ["Mayor flexibilidad y creatividad en el hijo", "Ansiedad por incertidumbre y paradójicamente mayor transgresión", "El hijo aprende a adaptarse mejor a la vida", "No tiene efectos significativos si hay amor"],
+        correcta: 1,
+        explicacion: "El manual (4.5) explica que la inconsistencia produce una forma particular de ansiedad: si el hijo sabe que la regla a veces se aplica y a veces no, siempre vale la pena intentar ver si esta vez tampoco."
+      },
+      {
+        q: "¿Cuál es el error más frecuente cuando un padre aplica disciplina 'para restaurar su ego herido'?",
+        opciones: ["Que la disciplina sea demasiado leve", "Que la disciplina pierde su propósito formativo y se convierte en descarga emocional", "Que el hijo no aprenda la lección", "Que el hijo pierda el respeto al padre"],
+        correcta: 1,
+        explicacion: "El manual (4.6) distingue entre disciplina que forma y disciplina que descarga frustración. Cuando el objetivo es 'ganar' en lugar del bien del hijo, la disciplina pierde su propósito."
+      }
+    ]
+  },
+  {
+    id: "fe-hogar",
+    title: "Fe en el Hogar",
+    desc: "¿Cómo vivís la fe en tu familia?",
+    parte: "Parte 5",
+    preguntas: [
+      {
+        q: "¿Cuál de estas cosas observan más los hijos adolescentes respecto a la fe de sus padres?",
+        opciones: ["Cuántos versículos sabe de memoria el padre", "Con qué frecuencia va el padre a la iglesia", "Cómo trata el padre a las personas que no le caen bien o que le hicieron daño", "Qué predica el pastor en los cultos"],
+        correcta: 2,
+        explicacion: "El manual (5.1) lista lo que los hijos adolescentes realmente observan: cómo habla el padre de quienes lo hirieron, cómo reacciona ante el fracaso, cómo trata a quienes no tienen nada que ofrecerle."
+      },
+      {
+        q: "Según el manual, ¿por qué el devocional familiar forzado puede ser contraproducente con adolescentes?",
+        opciones: ["Porque los adolescentes no pueden concentrarse por períodos largos", "Porque la Biblia es muy difícil de entender", "Porque los adolescentes son especialmente sensibles a lo forzado y artificial, y pueden asociar la fe con la performance religiosa", "Porque no tienen tiempo"],
+        correcta: 2,
+        explicacion: "El manual (5.2 y 5.3) explica que cuando la espiritualidad se siente como una actividad que el padre necesita completar en su lista, el adolescente lo detecta y se cierra."
+      },
+      {
+        q: "¿Cuándo suelen ocurrir las conversaciones espirituales más auténticas con adolescentes?",
+        opciones: ["En la reunión familiar de los domingos", "Solo cuando el hijo tiene una crisis de fe", "De manera natural: ante una injusticia, una película, una pregunta honesta del padre, un momento de asombro", "Cuando el padre inicia formalmente el tema"],
+        correcta: 2,
+        explicacion: "El manual (5.2) describe que las conversaciones espirituales más significativas surgen de la cotidianeidad: una crisis, una película, una pregunta honesta, un momento de gratitud o asombro compartido."
+      },
+      {
+        q: "¿Qué significa 'tercerizar la formación espiritual' de los hijos?",
+        opciones: ["Enviarlos a un colegio cristiano", "Delegar en la iglesia la responsabilidad primaria de la formación espiritual que corresponde al hogar", "Contratar un tutor bíblico", "Que el hijo se forme solo con su Biblia"],
+        correcta: 1,
+        explicacion: "El manual (1.5) advierte que cuando los padres llevan a sus hijos esperando que la iglesia 'haga algo' con ellos espiritualmente, están terciarizando algo que no puede terciarizarse efectivamente: la transmisión de una fe viva."
+      },
+      {
+        q: "Un padre nunca habla en casa sobre lo que lee en la Biblia. ¿Qué efecto probable tiene eso?",
+        opciones: ["Ninguno, la iglesia cubre ese rol", "Los hijos aprenderán por su cuenta", "Los hijos percibirán que la Biblia es un libro para el templo, no para la vida real", "Es lo más apropiado para no forzarlos"],
+        correcta: 2,
+        explicacion: "El manual (5.4) propone compartir con el hijo algo que al padre le llamó la atención en la Biblia, convirtiéndola en conversación, no en tarea. La vida del padre es el primer texto bíblico que los hijos leen (5.1)."
+      }
+    ]
+  },
+  {
+    id: "crisis",
+    title: "Crisis y Conflictos",
+    desc: "¿Cómo respondés cuando hay tormenta?",
+    parte: "Parte 7",
+    preguntas: [
+      {
+        q: "Tu hijo de 15 años dice que no quiere ir más a la iglesia. ¿Qué distingue el manual respecto a esta situación?",
+        opciones: ["Que hay que obligarlo porque es menor de edad", "Que la asistencia no es sinónimo de fe; el adolescente puede estar en un proceso espiritual genuino fuera de los formatos institucionales", "Que esto confirma que el hijo está perdiendo la fe", "Que hay que darle un ultimátum claro"],
+        correcta: 1,
+        explicacion: "El manual (7.1) distingue claramente: asistencia ≠ fe. Un adolescente puede asistir y tener fe muerta, o no asistir y estar en genuina búsqueda espiritual. El modelo es el padre del hijo pródigo: presencia expectante, no presión."
+      },
+      {
+        q: "¿Qué recomienda el manual cuando el padre se enoja demasiado durante un conflicto con su hijo?",
+        opciones: ["Sostener la posición para no perder autoridad", "Irse sin decir nada para no empeorar la situación", "Pedir tiempo, calmarse, y volver a retomar con compromiso explícito", "Esperar que el hijo pida disculpas primero"],
+        correcta: 2,
+        explicacion: "El manual (3.5) sugiere: 'Necesito unos minutos para calmarme, pero quiero que hablemos de esto antes de que termine el día.' Efesios 4:26: airaos, pero no pequéis; no se ponga el sol sobre vuestro enojo."
+      },
+      {
+        q: "Un padre nota que su hijo está muy callado y se aísla hace semanas. ¿Cuál es la respuesta recomendada?",
+        opciones: ["Presionarlo hasta que hable", "Esperarlo sin hacer nada para no invadir su espacio", "Nombrar lo observado sin presionar y dejar la puerta abierta: 'te noto diferente, estoy acá cuando quieras'", "Revisarle el celular para entender qué pasa"],
+        correcta: 2,
+        explicacion: "El manual (7.4) recomienda presencia regular sin agenda, y nombrar lo observado sin presionar. El sufrimiento silencioso puede ser señal de mayor riesgo que el enojo visible."
+      },
+      {
+        q: "Según el manual, ¿qué ocurre cuando un padre puede disculparse con su hijo por algo que hizo mal?",
+        opciones: ["Pierde autoridad y el hijo lo verá como débil", "Fortalece la relación y enseña que las relaciones se sostienen sobre la reparación", "Solo funciona si el hijo también se disculpa", "Es señal de que el padre no tiene control de la situación"],
+        correcta: 1,
+        explicacion: "El manual (7.5) explica que la disculpa del padre hace varias cosas: le dice al hijo que fue escuchado, le modela que los adultos se equivocan y pueden reconocerlo, y enseña que la reparación es posible. Paradójicamente produce más respeto, no menos."
+      },
+      {
+        q: "¿Cuál es la pregunta más honesta que deben hacerse los padres cuando el hijo no quiere ir a la iglesia?",
+        opciones: ["'¿Cómo lo convencemos sin que se enoje?'", "'¿Qué pastor podría hablarle?'", "'¿Qué es lo que más nos preocupa: la vida espiritual del hijo, o la vergüenza de lo que otros pensarán de nosotros como padres?'", "'¿Cuánto tiempo le damos antes de tomar medidas?'"],
+        correcta: 2,
+        explicacion: "El manual (7.1) invita a los padres a esta pregunta incómoda pero necesaria: parte de la reacción ante la apatía del hijo puede ser la preocupación por la propia imagen ante la comunidad, no genuinamente por el hijo."
+      }
+    ]
+  },
+  {
+    id: "adolescencia",
+    title: "Comprendiendo la Adolescencia",
+    desc: "¿Qué sabés sobre esta etapa?",
+    parte: "Parte 2",
+    preguntas: [
+      {
+        q: "¿Qué parte del cerebro adolescente está aún en desarrollo y qué implica eso para su comportamiento?",
+        opciones: ["El cerebelo; por eso tienen problemas de coordinación", "La corteza prefrontal; por eso tienen dificultad con el juicio, planificación y control de impulsos", "El hipocampo; por eso tienen mala memoria", "El cerebro adolescente ya está completamente formado"],
+        correcta: 1,
+        explicacion: "El manual (1.6) explica que la corteza prefrontal —sede del juicio, la planificación y el control de impulsos— no completa su desarrollo hasta los 25 años. Las decisiones impulsivas no son maldad ni falta de fe: son neurología."
+      },
+      {
+        q: "Un adolescente que se hace preguntas difíciles sobre Dios y la fe, ¿qué está mostrando según el manual?",
+        opciones: ["Que está perdiendo la fe y necesita intervención urgente", "Que fue influenciado negativamente por sus amigos", "Que posiblemente está en el inicio de una fe más sólida y genuinamente propia", "Que los padres fallaron en su formación espiritual"],
+        correcta: 2,
+        explicacion: "El manual (2.1, 6.5) explica que los adolescentes que se hacen preguntas difíciles sobre Dios están en un lugar más prometedor que los que nunca se las hicieron. La fe cuestionada puede volverse más sólida."
+      },
+      {
+        q: "¿Por qué la necesidad de pertenencia del adolescente hacia sus pares no es 'traición' a la familia?",
+        opciones: ["Porque los pares son más importantes que la familia", "Porque es parte del diseño creacional de individuación: necesita construir vínculos fuera del hogar para desarrollar identidad propia", "Porque los padres no pueden entender a los adolescentes", "El manual no aborda este tema"],
+        correcta: 1,
+        explicacion: "El manual (2.3) explica que el cambio de pertenencia hacia los pares es parte del proceso de individuación. El problema no es que busque pertenencia: es a qué grupo recurre. Si el hogar es seguro, no necesita buscarla en otro lado."
+      },
+      {
+        q: "¿Cuál de estas NO es una causa real de apatía espiritual adolescente según el manual?",
+        opciones: ["Aburrimiento con los formatos religiosos (no con la fe en sí)", "Heridas relacionales dentro de la comunidad de fe", "Falta de talento espiritual innato", "Sufrimiento no procesado que se manifiesta como indiferencia"],
+        correcta: 2,
+        explicacion: "El manual (2.5) identifica 5 causas reales de apatía espiritual: aburrimiento con formatos, desconexión fe-vida, fe heredada no apropiada, heridas en comunidad, y sufrimiento no procesado. El 'talento espiritual innato' no existe como categoría bíblica."
+      },
+      {
+        q: "¿Cuándo debe consultar un padre creyente a un profesional de salud mental por su hijo?",
+        opciones: ["Solo si el hijo deja de ir a la iglesia", "Ante cualquier expresión de pensamientos suicidas, autolesiones, aislamiento total o episodios disociativos", "Solo si el hijo mismo lo pide", "Cuando todos los recursos espirituales ya fueron agotados"],
+        correcta: 1,
+        explicacion: "El manual (2.6) es claro: ante señales de alerta como pensamientos suicidas, autolesiones o aislamiento severo, la consulta profesional es inmediata y no contradice la fe. La oración y la terapia se complementan."
+      }
+    ]
+  }
+];
+
+// ── SCREEN MANAGEMENT ──
+window.showScreen = function(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  window.scrollTo(0, 0);
+  if (id === 'screen-tests') renderTests();
+  if (id === 'screen-admin') loadCodes();
+};
+
+// ── AUTH LISTENERS ──
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    currentUser = user;
+    const userRef = doc(db, 'usuarios', user.uid);
+    const snap = await getDoc(userRef);
+    if (snap.exists()) {
+      const data = snap.data();
+      document.getElementById('home-name').textContent = data.nombre || user.email;
+      if (data.email === ADMIN_EMAIL) {
+        document.getElementById('admin-card-wrap').classList.remove('hidden');
+      }
+      updateProgress(data);
+    }
+    showScreen('screen-home');
+  } else {
+    currentUser = null;
+    showScreen('screen-login');
+  }
+});
+
+// ── LOGIN ──
+window.handleLogin = async function() {
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  const code = document.getElementById('login-code').value.trim().toUpperCase();
+  const errEl = document.getElementById('login-error');
+  errEl.classList.remove('visible');
+
+  if (!email || !code) {
+    errEl.textContent = 'Ingresá tu email y código de acceso.';
+    errEl.classList.add('visible');
+    return;
+  }
+
+  document.getElementById('login-btn-text').textContent = 'Verificando...';
+
+  try {
+    // Verificar código en Firestore
+    const codeRef = doc(db, 'codigos', code);
+    const codeSnap = await getDoc(codeRef);
+
+    if (!codeSnap.exists()) {
+      errEl.textContent = 'Código inválido. Verificá que esté bien escrito.';
+      errEl.classList.add('visible');
+      document.getElementById('login-btn-text').textContent = 'Ingresar';
+      return;
+    }
+
+    const codeData = codeSnap.data();
+    if (codeData.usado && codeData.email !== email) {
+      errEl.textContent = 'Este código ya fue usado con otro email.';
+      errEl.classList.add('visible');
+      document.getElementById('login-btn-text').textContent = 'Ingresar';
+      return;
+    }
+
+    // Crear o loguear usuario
+    let userCred;
+    try {
+      userCred = await createUserWithEmailAndPassword(auth, email, code + '_MO2026');
+    } catch (e) {
+      if (e.code === 'auth/email-already-in-use') {
+        userCred = await signInWithEmailAndPassword(auth, email, code + '_MO2026');
+      } else {
+        throw e;
+      }
+    }
+
+    // Marcar código como usado y guardar usuario
+    await updateDoc(codeRef, { usado: true, email: email, fechaUso: serverTimestamp() });
+    const nombre = email.split('@')[0];
+    await setDoc(doc(db, 'usuarios', userCred.user.uid), {
+      email: email,
+      nombre: nombre,
+      fechaRegistro: serverTimestamp(),
+      testsCompletados: {},
+      preguntasHechas: 0
+    }, { merge: true });
+
+    document.getElementById('login-btn-text').textContent = 'Ingresar';
+  } catch (error) {
+    console.error(error);
+    errEl.textContent = 'Error al ingresar. Revisá tu email e intentá de nuevo.';
+    errEl.classList.add('visible');
+    document.getElementById('login-btn-text').textContent = 'Ingresar';
+  }
+};
+
+window.handleReturning = async function() {
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  const errEl = document.getElementById('login-error');
+  if (!email) {
+    errEl.textContent = 'Ingresá tu email para continuar.';
+    errEl.classList.add('visible');
+    return;
+  }
+  await sendPasswordResetEmail(auth, email);
+  showToast('Te enviamos un link de acceso a tu email');
+};
+
+window.handleLogout = async function() {
+  await signOut(auth);
+};
+
+// ── PROGRESS ──
+function updateProgress(data) {
+  const tests = data.testsCompletados || {};
+  const done = Object.keys(tests).length;
+  const total = TESTS.length;
+  const pct = Math.round((done / total) * 100);
+  document.getElementById('prog-bar').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = `${done} de ${total} tests completados`;
+  document.getElementById('prog-sub').textContent = pct + '% del recorrido';
+}
+
+// ── CHAT ──
+window.sendMessage = async function() {
+  const input = document.getElementById('chat-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  input.value = '';
+  appendMsg(msg, 'user');
+
+  const sendBtn = document.getElementById('send-btn');
+  sendBtn.disabled = true;
+
+  // Typing indicator
+  const typingId = 'typing-' + Date.now();
+  const typingEl = document.createElement('div');
+  typingEl.className = 'msg bot msg-typing';
+  typingEl.id = typingId;
+  typingEl.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+  document.getElementById('chat-messages').appendChild(typingEl);
+  scrollChat();
+
+  chatHistory.push({ role: 'user', content: msg });
+
+  try {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${GROQ_KEY}`
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        max_tokens: 600,
+        messages: [
+          { role: 'system', content: MANUAL_CONTEXT },
+          ...chatHistory.slice(-10)
+        ]
+      })
+    });
+
+    const data = await res.json();
+    const reply = data.choices?.[0]?.message?.content || 'No pude obtener una respuesta. Intentá de nuevo.';
+
+    document.getElementById(typingId)?.remove();
+    appendMsg(reply, 'bot');
+    chatHistory.push({ role: 'assistant', content: reply });
+
+    // Guardar contador
+    if (currentUser) {
+      const userRef = doc(db, 'usuarios', currentUser.uid);
+      const snap = await getDoc(userRef);
+      const prev = snap.data()?.preguntasHechas || 0;
+      await updateDoc(userRef, { preguntasHechas: prev + 1 });
+    }
+  } catch (err) {
+    document.getElementById(typingId)?.remove();
+    appendMsg('Hubo un error al conectarme. Verificá tu conexión e intentá de nuevo.', 'bot');
+  }
+
+  sendBtn.disabled = false;
+};
+
+function appendMsg(text, role) {
+  const el = document.createElement('div');
+  el.className = `msg ${role} fade-in`;
+  el.innerHTML = text.replace(/\n/g, '<br>');
+  document.getElementById('chat-messages').appendChild(el);
+  scrollChat();
+}
+
+function scrollChat() {
+  const c = document.getElementById('chat-messages');
+  c.scrollTop = c.scrollHeight;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const input = document.getElementById('chat-input');
+  input?.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  });
+  input?.addEventListener('input', () => {
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 100) + 'px';
+  });
+});
+
+// ── TESTS ──
+window.renderTests = function() {
+  const list = document.getElementById('tests-list');
+  if (!currentUser) return;
+  getDoc(doc(db, 'usuarios', currentUser.uid)).then(snap => {
+    const done = snap.data()?.testsCompletados || {};
+    list.innerHTML = TESTS.map(t => `
+      <div class="test-card" onclick="startTest('${t.id}')">
+        <h3>${t.title}</h3>
+        <p>${t.desc}</p>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
+          <span style="font-size:11px;color:var(--gris)">${t.parte} · ${t.preguntas.length} preguntas</span>
+          <span class="test-badge ${done[t.id] ? 'badge-done' : 'badge-pending'}">${done[t.id] ? '✓ Completado' : 'Pendiente'}</span>
+        </div>
+      </div>
+    `).join('');
+  });
+};
+
+window.startTest = function(id) {
+  currentTest = TESTS.find(t => t.id === id);
+  currentQ = 0;
+  userAnswers = [];
+  document.getElementById('quiz-title').textContent = currentTest.title;
+  showScreen('screen-quiz');
+  renderQuestion();
+};
+
+function renderQuestion() {
+  if (!currentTest) return;
+  const q = currentTest.preguntas[currentQ];
+  const total = currentTest.preguntas.length;
+  document.getElementById('quiz-num').textContent = `Pregunta ${currentQ + 1} de ${total}`;
+  document.getElementById('quiz-sub').textContent = `${currentQ + 1} de ${total}`;
+  document.getElementById('quiz-q').textContent = q.q;
+  document.getElementById('quiz-prog-fill').style.width = ((currentQ / total) * 100) + '%';
+  document.getElementById('quiz-next-btn').classList.add('hidden');
+
+  const opts = document.getElementById('quiz-options');
+  opts.innerHTML = q.opciones.map((o, i) => `
+    <button class="option-btn" onclick="selectOption(${i})">${o}</button>
+  `).join('');
+}
+
+window.selectOption = function(idx) {
+  const q = currentTest.preguntas[currentQ];
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach(b => b.disabled = true);
+  btns[idx].classList.add(idx === q.correcta ? 'correct' : 'wrong');
+  if (idx !== q.correcta) btns[q.correcta].classList.add('correct');
+
+  // Show explanation
+  const expEl = document.createElement('div');
+  expEl.style.cssText = 'font-size:13px;color:var(--texto);background:rgba(45,74,107,0.05);padding:12px 14px;border-radius:10px;margin-top:4px;line-height:1.5;';
+  expEl.textContent = q.explicacion;
+  document.getElementById('quiz-options').appendChild(expEl);
+
+  userAnswers.push(idx === q.correcta);
+  document.getElementById('quiz-next-btn').classList.remove('hidden');
+  document.getElementById('quiz-next-btn').textContent = currentQ < currentTest.preguntas.length - 1 ? 'Siguiente pregunta' : 'Ver resultado';
+};
+
+window.nextQuestion = function() {
+  currentQ++;
+  if (currentQ >= currentTest.preguntas.length) {
+    showResult();
+  } else {
+    renderQuestion();
+  }
+};
+
+async function showResult() {
+  const correct = userAnswers.filter(Boolean).length;
+  const total = currentTest.preguntas.length;
+  const pct = Math.round((correct / total) * 100);
+
+  document.getElementById('result-test-name').textContent = currentTest.title;
+  document.getElementById('result-score').textContent = pct + '%';
+
+  let msg = '';
+  if (pct >= 80) msg = '¡Excelente! Tenés una comprensión sólida de este tema. El manual te ha formado bien en esta área.';
+  else if (pct >= 60) msg = 'Bien encaminado. Hay algunas áreas para profundizar. Te recomendamos releer la sección correspondiente del manual.';
+  else msg = 'Esta es un área para crecer. No te desanimes — identificar las brechas es el primer paso. Revisá esta parte del manual con calma.';
+
+  document.getElementById('result-msg').textContent = msg;
+  showScreen('screen-result');
+
+  // Guardar resultado
+  if (currentUser) {
+    const userRef = doc(db, 'usuarios', currentUser.uid);
+    await updateDoc(userRef, {
+      [`testsCompletados.${currentTest.id}`]: { pct, fecha: new Date().toISOString() }
+    });
+  }
+}
+
+// ── ADMIN ──
+window.loadCodes = async function() {
+  const list = document.getElementById('codes-list');
+  try {
+    const snap = await getDocs(collection(db, 'codigos'));
+    if (snap.empty) { list.innerHTML = '<p style="color:var(--gris);font-size:14px">No hay códigos aún. Generá el primero.</p>'; return; }
+
+    list.innerHTML = '';
+    snap.forEach(d => {
+      const data = d.data();
+      const el = document.createElement('div');
+      el.className = 'code-item';
+      el.innerHTML = `
+        <div>
+          <div class="code-val">${d.id}</div>
+          ${data.usado ? `<div style="font-size:11px;color:var(--gris);margin-top:2px">${data.email || ''}</div>` : ''}
+        </div>
+        <span class="code-status ${data.usado ? 'status-used' : 'status-active'}">${data.usado ? 'Usado' : 'Activo'}</span>
+      `;
+      list.appendChild(el);
+    });
+  } catch (e) {
+    list.innerHTML = '<p style="color:var(--gris);font-size:14px">Error al cargar códigos.</p>';
+  }
+};
+
+window.generateCode = async function() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for (let i = 0; i < 4; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  code += '-';
+  for (let i = 0; i < 4; i++) code += chars[Math.floor(Math.random() * chars.length)];
+
+  await setDoc(doc(db, 'codigos', code), {
+    usado: false,
+    email: null,
+    fechaCreacion: serverTimestamp()
+  });
+
+  navigator.clipboard?.writeText(code).catch(() => {});
+  showToast(`Código generado: ${code} (copiado)`);
+  loadCodes();
+};
+
+// ── TOAST ──
+window.showToast = function(msg, duration = 3000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+};
+
+// ── PWA INSTALL ──
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('install-banner').classList.remove('hidden');
+});
+
+document.getElementById('install-btn')?.addEventListener('click', async () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    document.getElementById('install-banner').classList.add('hidden');
+  }
+});
+</script>
+
+<!-- PWA Manifest inline -->
+<script>
+const manifest = {
+  name: "El Ministerio Olvidado",
+  short_name: "Ministerio Olvidado",
+  description: "Formación para padres de adolescentes",
+  start_url: "/",
+  display: "standalone",
+  background_color: "#F7F4EF",
+  theme_color: "#2D4A6B",
+  icons: [
+    { src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%232D4A6B'/><text y='.9em' font-size='70' x='15'>🏠</text></svg>", sizes: "192x192", type: "image/svg+xml" },
+    { src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%232D4A6B'/><text y='.9em' font-size='70' x='15'>🏠</text></svg>", sizes: "512x512", type: "image/svg+xml" }
+  ]
+};
+const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+const url = URL.createObjectURL(blob);
+const link = document.createElement('link');
+link.rel = 'manifest'; link.href = url;
+document.head.appendChild(link);
+</script>
+
+</body>
+</html>
+
+<!-- Service Worker para PWA instalable -->
+<script>
+if ('serviceWorker' in navigator) {
+  const swCode = `
+    const CACHE = 'ministerio-olvidado-v1';
+    self.addEventListener('install', e => { self.skipWaiting(); });
+    self.addEventListener('activate', e => { self.clients.claim(); });
+    self.addEventListener('fetch', e => {
+      if (e.request.method !== 'GET') return;
+      e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+    });
+  `;
+  const swBlob = new Blob([swCode], { type: 'application/javascript' });
+  const swUrl = URL.createObjectURL(swBlob);
+  navigator.serviceWorker.register(swUrl).catch(() => {});
+}
+</script>
