@@ -413,6 +413,104 @@ body {
   margin: 40px auto;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── DESAFIO SEMANAL ── */
+.desafio-card {
+  background: linear-gradient(135deg, var(--azul) 0%, var(--azul-claro) 100%);
+  border-radius: 18px;
+  padding: 22px 20px;
+  margin-bottom: 12px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform .15s;
+}
+.desafio-card::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 140px; height: 140px;
+  border-radius: 50%;
+  background: rgba(196,113,74,0.2);
+}
+.desafio-card:active { transform: scale(.99); }
+.desafio-semana { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.6); margin-bottom: 6px; }
+.desafio-titulo { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 600; line-height: 1.3; margin-bottom: 8px; position: relative; z-index:1; }
+.desafio-desc { font-size: 13px; color: rgba(255,255,255,0.8); line-height: 1.5; position: relative; z-index:1; }
+.desafio-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; position: relative; z-index:1; }
+.desafio-completar {
+  background: var(--terracota);
+  color: white;
+  border: none;
+  padding: 9px 16px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+}
+.desafio-completado {
+  background: rgba(122,158,126,0.25);
+  color: rgba(255,255,255,0.9);
+  border: 1px solid rgba(122,158,126,0.4);
+  padding: 9px 16px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-family: 'DM Sans', sans-serif;
+}
+.desafio-dias { font-size: 11px; color: rgba(255,255,255,0.5); }
+
+/* ── DIARIO ── */
+.diario-entry {
+  background: var(--blanco);
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-bottom: 12px;
+  box-shadow: var(--card-sombra);
+  border: 1px solid rgba(228,224,218,0.5);
+}
+.diario-entry-fecha { font-size: 11px; color: var(--gris); margin-bottom: 6px; }
+.diario-entry-texto { font-size: 14px; color: var(--texto); line-height: 1.5; margin-bottom: 10px; }
+.diario-entry-respuesta { font-size: 13px; color: var(--azul); line-height: 1.5; padding-top: 10px; border-top: 1px solid var(--borde); font-style: italic; }
+
+/* ── ORACION ── */
+.oracion-card {
+  background: linear-gradient(135deg, #4A7A5A 0%, var(--salvia) 100%);
+  border-radius: 18px;
+  padding: 24px 20px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.oracion-card::before {
+  content: '✦';
+  position: absolute;
+  top: 12px; right: 20px;
+  font-size: 28px;
+  opacity: 0.2;
+}
+.oracion-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.6); margin-bottom: 10px; }
+.oracion-texto { font-family: 'Playfair Display', serif; font-size: 16px; line-height: 1.7; color: white; font-style: italic; }
+.oracion-loading { font-size: 14px; color: rgba(255,255,255,0.7); }
+
+/* ── TEXTAREA DIARIO ── */
+.diario-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid var(--borde);
+  border-radius: 12px;
+  background: var(--blanco);
+  font-size: 15px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--texto);
+  outline: none;
+  resize: none;
+  min-height: 100px;
+  line-height: 1.5;
+}
+.diario-input:focus { border-color: var(--azul); }
 </style>
 </head>
 <body>
@@ -474,6 +572,25 @@ body {
       <div class="card-arrow">›</div>
     </div>
 
+
+    <div class="card" onclick="showScreen('screen-diario')">
+      <div class="card-icon" style="background:rgba(122,158,126,0.12)">📔</div>
+      <div class="card-text">
+        <h3>Diario de crianza</h3>
+        <p>Escribí y recibí reflexiones del manual</p>
+      </div>
+      <div class="card-arrow">›</div>
+    </div>
+
+    <div class="card" onclick="showScreen('screen-oracion')">
+      <div class="card-icon" style="background:rgba(74,122,90,0.1)">🙏</div>
+      <div class="card-text">
+        <h3>Oración de la semana</h3>
+        <p>Una oración generada para vos esta semana</p>
+      </div>
+      <div class="card-arrow">›</div>
+    </div>
+
     <div class="sec-title" style="margin-top:8px">Tu progreso</div>
     <div class="card" style="flex-direction:column;align-items:flex-start;gap:10px;cursor:default">
       <div style="display:flex;align-items:center;gap:12px;width:100%">
@@ -485,6 +602,18 @@ body {
       </div>
       <div class="prog-bar-wrap" style="width:100%">
         <div class="prog-bar" id="prog-bar" style="width:0%"></div>
+      </div>
+    </div>
+
+
+    <div class="sec-title" style="margin-top:8px">Desafío de esta semana</div>
+    <div class="desafio-card" id="desafio-home-card">
+      <div class="desafio-semana" id="desafio-semana-label">Cargando...</div>
+      <div class="desafio-titulo" id="desafio-home-titulo">—</div>
+      <div class="desafio-desc" id="desafio-home-desc"></div>
+      <div class="desafio-footer">
+        <span class="desafio-dias" id="desafio-dias-restantes"></span>
+        <button id="desafio-home-btn" class="desafio-completar" onclick="toggleDesafio()">Marcar como hecho ✓</button>
       </div>
     </div>
 
@@ -597,6 +726,76 @@ body {
     <div id="codes-list">
       <div class="spinner"></div>
     </div>
+  </div>
+</div>
+
+
+<!-- SCREEN: DESAFIO SEMANAL -->
+<div id="screen-desafio" class="screen hidden">
+  <div class="test-header">
+    <button class="back-btn" onclick="showScreen('screen-home')">‹</button>
+    <div class="chat-header-text">
+      <h2>Desafío semanal</h2>
+      <p>Una práctica concreta cada semana</p>
+    </div>
+  </div>
+  <div class="body-pad" style="overflow-y:auto;flex:1">
+    <div id="desafio-full-card" class="desafio-card" style="cursor:default">
+      <div class="desafio-semana" id="desafio-full-semana">—</div>
+      <div class="desafio-titulo" id="desafio-full-titulo">—</div>
+      <div class="desafio-desc" id="desafio-full-desc" style="margin-bottom:12px"></div>
+      <div id="desafio-full-versiculo" style="font-size:12px;color:rgba(255,255,255,0.6);font-style:italic;line-height:1.5;padding-top:12px;border-top:1px solid rgba(255,255,255,0.15)"></div>
+    </div>
+    <div id="desafio-estado-wrap" style="margin-bottom:20px">
+      <button id="desafio-full-btn" class="btn btn-primary" onclick="toggleDesafio()">✓ Marcar como completado esta semana</button>
+    </div>
+    <div class="sec-title">Historial de desafíos</div>
+    <div id="desafio-historial"></div>
+  </div>
+</div>
+
+<!-- SCREEN: DIARIO DE CRIANZA -->
+<div id="screen-diario" class="screen hidden">
+  <div class="test-header">
+    <button class="back-btn" onclick="showScreen('screen-home')">‹</button>
+    <div class="chat-header-text">
+      <h2>Diario de crianza</h2>
+      <p>Tu proceso como padre, semana a semana</p>
+    </div>
+  </div>
+  <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column">
+    <div style="padding:20px 20px 0">
+      <div class="sec-title">¿Cómo estuvo esta semana?</div>
+      <textarea id="diario-input" class="diario-input" placeholder="Contá una situación con tu hijo, cómo te fue con el desafío, o lo que tengas en el corazón..."></textarea>
+      <button class="btn btn-primary" id="diario-btn" onclick="guardarDiario()" style="margin-top:12px">Guardar y recibir reflexión</button>
+    </div>
+    <div style="padding:20px">
+      <div class="sec-title">Entradas anteriores</div>
+      <div id="diario-lista">
+        <div class="spinner"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN: ORACION -->
+<div id="screen-oracion" class="screen hidden">
+  <div class="test-header">
+    <button class="back-btn" onclick="showScreen('screen-home')">‹</button>
+    <div class="chat-header-text">
+      <h2>Oración de la semana</h2>
+      <p>Generada para vos esta semana</p>
+    </div>
+  </div>
+  <div class="body-pad" style="overflow-y:auto;flex:1">
+    <div class="oracion-card" id="oracion-card">
+      <div class="oracion-label">Oración de la semana</div>
+      <div class="oracion-texto" id="oracion-texto">
+        <div class="oracion-loading">Generando tu oración...</div>
+      </div>
+    </div>
+    <button class="btn btn-secondary" onclick="generarOracion()" style="margin-bottom:12px">↻ Generar nueva oración</button>
+    <button class="btn btn-ghost" id="oracion-compartir" style="width:100%;text-align:center" onclick="compartirOracion()">Compartir por WhatsApp</button>
   </div>
 </div>
 
@@ -930,6 +1129,9 @@ window.showScreen = function(id) {
   window.scrollTo(0, 0);
   if (id === 'screen-tests') renderTests();
   if (id === 'screen-admin') loadCodes();
+  if (id === 'screen-desafio') cargarDesafioFull();
+  if (id === 'screen-diario') cargarDiario();
+  if (id === 'screen-oracion') generarOracion();
 };
 
 // ── AUTH LISTENERS ──
@@ -947,6 +1149,7 @@ onAuthStateChanged(auth, async (user) => {
       updateProgress(data);
     }
     showScreen('screen-home');
+    cargarDesafioHome();
   } else {
     currentUser = null;
     showScreen('screen-login');
@@ -1264,6 +1467,220 @@ window.loadCodes = async function() {
   } catch (e) {
     list.innerHTML = '<p style="color:var(--gris);font-size:14px">Error al cargar códigos.</p>';
   }
+};
+
+
+// ── DESAFIOS DATA ──
+const DESAFIOS = [
+  { semana: 1, titulo: "Escuchá antes de responder", desc: "Esta semana, antes de responder a algo que tu hijo te diga, repetí en tus propias palabras lo que él dijo y preguntá: '¿Entendí bien?'. Solo eso.", versiculo: "Santiago 1:19 — Sea pronto para oír, tardo para hablar." },
+  { semana: 2, titulo: "Una pregunta que abre", desc: "Buscá un momento natural esta semana y hacé una sola pregunta genuinamente abierta a tu hijo: '¿Cómo te sentiste con eso?'. Sin dar tu opinión después. Solo escuchá.", versiculo: "Marcos 10:51 — Jesús preguntó: '¿Qué querés que te haga?'" },
+  { semana: 3, titulo: "Nombrá algo que valoras de tu hijo", desc: "Decile a tu hijo algo específico que valorás de él o ella, sin que venga acompañado de un 'pero'. Una sola cosa, genuina y concreta.", versiculo: "Efesios 2:10 — Somos su poiema, su obra de arte." },
+  { semana: 4, titulo: "La pausa deliberada", desc: "Cuando esta semana tu hijo diga algo que te active emocionalmente, antes de responder decí: 'Gracias por contarme. Dame un momento para pensar.' Y cumplilo.", versiculo: "Proverbios 15:28 — El corazón del justo medita cómo responder." },
+  { semana: 5, titulo: "Reconocé un error en voz alta", desc: "Esta semana, cuando cometas un error con tu hijo, reconocelo en voz alta: 'Me equivoqué en esto. Lo siento.' Sin justificaciones.", versiculo: "Santiago 5:16 — Confesaos vuestras ofensas unos a otros." },
+  { semana: 6, titulo: "Presencia sin agenda", desc: "Esta semana, elegí 20 minutos para estar con tu hijo sin agenda, sin celular, sin correcciones. Solo presente.", versiculo: "Éxodo 33:11 — Dios hablaba con Moisés cara a cara, como habla un amigo." },
+  { semana: 7, titulo: "Compartí tu fe en acción", desc: "Esta semana dejá que tu hijo te vea atravesar algo difícil con fe visible: una oración honesta, una decisión desde tus valores, una reacción diferente.", versiculo: "Juan 13:15 — Os he dado ejemplo para que como yo os he hecho, vosotros hagáis." },
+  { semana: 8, titulo: "Una conversación espiritual natural", desc: "Esta semana aprovechá un momento cotidiano (una película, una noticia, algo que pasó) para hacer una pregunta espiritual genuina a tu hijo, sin formato de clase.", versiculo: "Deuteronomio 6:7 — Hablarás de estas cosas en el camino, al acostarte y al levantarte." },
+  { semana: 9, titulo: "Revisá un límite vigente", desc: "Esta semana conversá con tu pareja sobre si los límites actuales de tu hijo corresponden a su madurez real. Identificá uno para ajustar.", versiculo: "Mateo 5:37 — Sea vuestro sí, sí; y vuestro no, no." },
+  { semana: 10, titulo: "Orar por tu hijo en voz alta", desc: "Esta semana decile a tu hijo: 'Esta semana voy a estar orando por vos en esto.' Sin presionar que él ore también. Solo la declaración de amor.", versiculo: "1 Tesalonicenses 5:17 — Orad sin cesar." },
+  { semana: 11, titulo: "Preguntá sobre sus amigos", desc: "Esta semana preguntá sobre uno de los amigos de tu hijo con genuina curiosidad: '¿Cómo es? ¿Qué te gusta de él/ella?' Sin juicio.", versiculo: "Proverbios 27:17 — El hierro con hierro se aguza." },
+  { semana: 12, titulo: "Celebrá el crecimiento", desc: "Esta semana nombrá algo concreto en lo que tu hijo creció este año. Decíselo directamente, mirándolo a los ojos.", versiculo: "Lucas 2:52 — Jesús crecía en sabiduría, estatura y gracia." }
+];
+
+function getSemanaActual() {
+  const inicio = new Date('2026-01-05'); // Primer lunes del año
+  const hoy = new Date();
+  const diff = Math.floor((hoy - inicio) / (7 * 24 * 60 * 60 * 1000));
+  return (diff % DESAFIOS.length + DESAFIOS.length) % DESAFIOS.length;
+}
+
+function getDesafioActual() {
+  return DESAFIOS[getSemanaActual()];
+}
+
+function getDiasRestantes() {
+  const hoy = new Date();
+  const diasHastaLunes = (8 - hoy.getDay()) % 7 || 7;
+  return diasHastaLunes === 1 ? 'Último día' : `${diasHastaLunes} días restantes`;
+}
+
+async function cargarDesafioHome() {
+  const d = getDesafioActual();
+  const semanaIdx = getSemanaActual();
+  document.getElementById('desafio-semana-label').textContent = `Semana ${d.semana} · ${getDiasRestantes()}`;
+  document.getElementById('desafio-home-titulo').textContent = d.titulo;
+  document.getElementById('desafio-home-desc').textContent = d.desc;
+  document.getElementById('desafio-dias-restantes').textContent = getDiasRestantes();
+
+  if (currentUser) {
+    const snap = await getDoc(doc(db, 'usuarios', currentUser.uid));
+    const completados = snap.data()?.desafiosCompletados || {};
+    const btn = document.getElementById('desafio-home-btn');
+    if (completados[semanaIdx]) {
+      btn.textContent = '✓ Completado esta semana';
+      btn.className = 'desafio-completado';
+    } else {
+      btn.textContent = 'Marcar como hecho ✓';
+      btn.className = 'desafio-completar';
+    }
+  }
+}
+
+async function cargarDesafioFull() {
+  const d = getDesafioActual();
+  const semanaIdx = getSemanaActual();
+  document.getElementById('desafio-full-semana').textContent = `Semana ${d.semana}`;
+  document.getElementById('desafio-full-titulo').textContent = d.titulo;
+  document.getElementById('desafio-full-desc').textContent = d.desc;
+  document.getElementById('desafio-full-versiculo').textContent = d.versiculo;
+
+  if (currentUser) {
+    const snap = await getDoc(doc(db, 'usuarios', currentUser.uid));
+    const completados = snap.data()?.desafiosCompletados || {};
+    const btn = document.getElementById('desafio-full-btn');
+    if (completados[semanaIdx]) {
+      btn.textContent = '✓ Completado esta semana';
+      btn.style.background = 'var(--salvia)';
+    }
+
+    // Historial
+    const hist = document.getElementById('desafio-historial');
+    const entries = Object.entries(completados);
+    if (entries.length === 0) {
+      hist.innerHTML = '<p style="font-size:13px;color:var(--gris)">Todavía no completaste ningún desafío. ¡Esta semana es el momento!</p>';
+    } else {
+      hist.innerHTML = entries.map(([idx, data]) => {
+        const des = DESAFIOS[parseInt(idx)];
+        return `<div style="background:var(--blanco);border-radius:12px;padding:14px 16px;margin-bottom:10px;box-shadow:var(--card-sombra);border-left:3px solid var(--salvia)">
+          <div style="font-size:12px;color:var(--salvia);font-weight:500;margin-bottom:3px">✓ Semana ${des?.semana || parseInt(idx)+1}</div>
+          <div style="font-size:14px;color:var(--texto)">${des?.titulo || '—'}</div>
+        </div>`;
+      }).join('');
+    }
+  }
+}
+
+window.toggleDesafio = async function() {
+  if (!currentUser) return;
+  const semanaIdx = getSemanaActual();
+  const userRef = doc(db, 'usuarios', currentUser.uid);
+  const snap = await getDoc(userRef);
+  const completados = snap.data()?.desafiosCompletados || {};
+
+  if (completados[semanaIdx]) {
+    delete completados[semanaIdx];
+  } else {
+    completados[semanaIdx] = { fecha: new Date().toISOString() };
+    showToast('¡Desafío completado! 🎉');
+  }
+
+  await updateDoc(userRef, { desafiosCompletados: completados });
+  cargarDesafioHome();
+  if (!document.getElementById('screen-desafio').classList.contains('hidden')) {
+    cargarDesafioFull();
+  }
+};
+
+// ── DIARIO ──
+window.guardarDiario = async function() {
+  const input = document.getElementById('diario-input');
+  const texto = input.value.trim();
+  if (!texto) return;
+
+  const btn = document.getElementById('diario-btn');
+  btn.textContent = 'Guardando...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_KEY}` },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        max_tokens: 300,
+        messages: [
+          { role: 'system', content: `Sos el asistente del manual "El Ministerio Olvidado" para padres de adolescentes. El padre escribió una entrada en su diario de crianza. Respondé con una reflexión breve (máximo 3 párrafos) basada en el manual: validá lo que vivió, ofrecé una perspectiva bíblica-práctica del manual, y terminá con una pregunta o práctica concreta. Tono: cálido, pastoral, sin sermón. En español.` },
+          { role: 'user', content: texto }
+        ]
+      })
+    });
+    const data = await res.json();
+    const respuesta = data.choices?.[0]?.message?.content || 'No pude generar una reflexión. Intentá de nuevo.';
+
+    if (currentUser) {
+      const entrada = { texto, respuesta, fecha: new Date().toISOString() };
+      await addDoc(collection(db, 'usuarios', currentUser.uid, 'diario'), entrada);
+    }
+
+    input.value = '';
+    cargarDiario();
+    showToast('Entrada guardada ✓');
+  } catch(e) {
+    showToast('Error al guardar. Intentá de nuevo.');
+  }
+
+  btn.textContent = 'Guardar y recibir reflexión';
+  btn.disabled = false;
+};
+
+async function cargarDiario() {
+  if (!currentUser) return;
+  const lista = document.getElementById('diario-lista');
+  try {
+    const diarioCol = collection(db, 'usuarios', currentUser.uid, 'diario');
+    const snap = await getDocs(diarioCol);
+    if (snap.empty) {
+      lista.innerHTML = '<p style="font-size:13px;color:var(--gris)">Todavía no hay entradas. Escribí tu primera reflexión arriba.</p>';
+      return;
+    }
+    const entries = [];
+    snap.forEach(d => entries.push({id: d.id, ...d.data()}));
+    entries.sort((a,b) => b.fecha.localeCompare(a.fecha));
+    lista.innerHTML = entries.slice(0,10).map(e => `
+      <div class="diario-entry">
+        <div class="diario-entry-fecha">${new Date(e.fecha).toLocaleDateString('es-AR', {weekday:'long', day:'numeric', month:'long'})}</div>
+        <div class="diario-entry-texto">${e.texto}</div>
+        <div class="diario-entry-respuesta">${e.respuesta}</div>
+      </div>
+    `).join('');
+  } catch(err) {
+    lista.innerHTML = '<p style="font-size:13px;color:var(--gris)">Error al cargar entradas.</p>';
+  }
+}
+
+// ── ORACION ──
+let oracionActual = '';
+
+window.generarOracion = async function() {
+  const el = document.getElementById('oracion-texto');
+  el.innerHTML = '<div class="oracion-loading">Generando tu oración...</div>';
+  const d = getDesafioActual();
+
+  try {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_KEY}` },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        max_tokens: 200,
+        messages: [
+          { role: 'system', content: 'Escribí una oración corta (máximo 8 líneas) para un padre o madre cristiano/a que está trabajando en su relación con su hijo adolescente. La oración debe ser personal, honesta, basada en las Escrituras, y conectada al desafío de la semana. Tono íntimo, no performativo. En español. Solo la oración, sin título ni introducción.' },
+          { role: 'user', content: `El desafío de esta semana es: "${d.titulo}". Escribí la oración.` }
+        ]
+      })
+    });
+    const data = await res.json();
+    oracionActual = data.choices?.[0]?.message?.content || 'No pude generar la oración. Intentá de nuevo.';
+    el.textContent = oracionActual;
+  } catch(e) {
+    el.textContent = 'Error al generar. Verificá tu conexión.';
+  }
+};
+
+window.compartirOracion = function() {
+  if (!oracionActual) return;
+  const header = 'Oracion de esta semana (El Ministerio Olvidado):\n\n';
+  const texto = encodeURIComponent(header + oracionActual);
+  window.open('https://wa.me/?text=' + texto, '_blank');
 };
 
 window.generateCode = async function() {
