@@ -512,6 +512,10 @@ body {
 }
 .diario-input:focus { border-color: var(--azul); }
 </style>
+<!-- Firebase compat (no ES modules) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 </head>
 <body>
 
@@ -814,12 +818,9 @@ body {
 <!-- ═══════════════════════════════ SCRIPTS ═══════════════════════════════ -->
 
 <!-- Firebase -->
-<script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
-// ── CONFIG ──
+<script>
+window.addEventListener('load', function() {
 const firebaseConfig = {
   apiKey: "AIzaSyAC3U5pCDOQ4i5YBeb_bq5oa-wg5e1fyUk",
   authDomain: "ministerio-olvidado.firebaseapp.com",
@@ -830,11 +831,11 @@ const firebaseConfig = {
 };
 
 const GROQ_KEY = "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";
-const ADMIN_EMAIL = "krolikowskapablo@gmail.com"; // ← CAMBIÁ por tu email
+const ADMIN_EMAIL = "krolikowskapablo@gmail.com";
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
 
 // ── STATE ──
 let currentUser = null;
@@ -1122,6 +1123,14 @@ const TESTS = [
   }
 ];
 
+// ── FIREBASE COMPAT HELPERS ──
+function docRef(path) {
+  const parts = path.split('/');
+  let ref = db;
+  parts.forEach((p, i) => { ref = i % 2 === 0 ? ref.collection(p) : ref.doc(p); });
+  return ref;
+}
+
 // ── SCREEN MANAGEMENT ──
 window.showScreen = function(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
@@ -1135,11 +1144,11 @@ window.showScreen = function(id) {
 };
 
 // ── AUTH LISTENERS ──
-onAuthStateChanged(auth, async (user) => {
+auth.onAuthStateChanged( async (user) => {
   if (user) {
     currentUser = user;
-    const userRef = doc(db, 'usuarios', user.uid);
-    const snap = await getDoc(userRef);
+    const userRef = db.collection('usuarios').doc(user.uid);
+    const snap = await userRef.get();
     if (snap.exists()) {
       const data = snap.data();
       document.getElementById('home-name').textContent = data.nombre || user.email;
@@ -1173,10 +1182,10 @@ window.handleLogin = async function() {
 
   try {
     // Verificar código en Firestore
-    const codeRef = doc(db, 'codigos', code);
-    const codeSnap = await getDoc(codeRef);
+    const codeRef = db.collection('codigos').doc(code);
+    const codeSnap = await codeRef.get();
 
-    if (!codeSnap.exists()) {
+    if (!codeSnap.exists) {
       errEl.textContent = 'Código inválido. Verificá que esté bien escrito.';
       errEl.classList.add('visible');
       document.getElementById('login-btn-text').textContent = 'Ingresar';
@@ -1195,11 +1204,11 @@ window.handleLogin = async function() {
     const password = 'MO2026_' + code.replace('-','');
     let userCred;
     try {
-      userCred = await createUserWithEmailAndPassword(auth, email, password);
+      userCred = await auth.createUserWithEmailAndPassword(email, password);
     } catch (e) {
       if (e.code === 'auth/email-already-in-use') {
         try {
-          userCred = await signInWithEmailAndPassword(auth, email, password);
+          userCred = await auth.signInWithEmailAndPassword(email, password);
         } catch (e2) {
           errEl.textContent = 'Email ya registrado con otro código. Usá "Entrar con mi email".';
           errEl.classList.add('visible');
@@ -1215,12 +1224,12 @@ window.handleLogin = async function() {
     }
 
     // Marcar código como usado y guardar usuario
-    await updateDoc(codeRef, { usado: true, email: email, fechaUso: serverTimestamp() });
+    await codeRef.update( { usado: true, email: email, fechaUso: firebase.firestore.FieldValue.serverTimestamp() });
     const nombre = email.split('@')[0];
-    await setDoc(doc(db, 'usuarios', userCred.user.uid), {
+    await db.collection('usuarios').doc(userCred.user.uid).set({
       email: email,
       nombre: nombre,
-      fechaRegistro: serverTimestamp(),
+      fechaRegistro: firebase.firestore.FieldValue.serverTimestamp(),
       testsCompletados: {},
       preguntasHechas: 0
     }, { merge: true });
@@ -1242,12 +1251,12 @@ window.handleReturning = async function() {
     errEl.classList.add('visible');
     return;
   }
-  await sendPasswordResetEmail(auth, email);
+  await auth.sendPasswordResetEmail(email);
   showToast('Te enviamos un link de acceso a tu email');
 };
 
 window.handleLogout = async function() {
-  await signOut(auth);
+  await auth.signOut();
 };
 
 // ── PROGRESS ──
@@ -1310,10 +1319,10 @@ window.sendMessage = async function() {
 
     // Guardar contador
     if (currentUser) {
-      const userRef = doc(db, 'usuarios', currentUser.uid);
-      const snap = await getDoc(userRef);
+      const userRef = db.collection('usuarios').doc(currentUser.uid);
+      const snap = await userRef.get();
       const prev = snap.data()?.preguntasHechas || 0;
-      await updateDoc(userRef, { preguntasHechas: prev + 1 });
+      await userRef.update( { preguntasHechas: prev + 1 });
     }
   } catch (err) {
     document.getElementById(typingId)?.remove();
@@ -1351,7 +1360,7 @@ document.addEventListener('DOMContentLoaded', () => {
 window.renderTests = function() {
   const list = document.getElementById('tests-list');
   if (!currentUser) return;
-  getDoc(doc(db, 'usuarios', currentUser.uid)).then(snap => {
+  db.collection('usuarios').doc(currentUser.uid).get().then(snap => {
     const done = snap.data()?.testsCompletados || {};
     list.innerHTML = TESTS.map(t => `
       <div class="test-card" onclick="startTest('${t.id}')">
@@ -1436,8 +1445,8 @@ async function showResult() {
 
   // Guardar resultado
   if (currentUser) {
-    const userRef = doc(db, 'usuarios', currentUser.uid);
-    await updateDoc(userRef, {
+    const userRef = db.collection('usuarios').doc(currentUser.uid);
+    await userRef.update( {
       [`testsCompletados.${currentTest.id}`]: { pct, fecha: new Date().toISOString() }
     });
   }
@@ -1447,7 +1456,7 @@ async function showResult() {
 window.loadCodes = async function() {
   const list = document.getElementById('codes-list');
   try {
-    const snap = await getDocs(collection(db, 'codigos'));
+    const snap = await db.collection('codigos').get();
     if (snap.empty) { list.innerHTML = '<p style="color:var(--gris);font-size:14px">No hay códigos aún. Generá el primero.</p>'; return; }
 
     list.innerHTML = '';
@@ -1512,7 +1521,7 @@ async function cargarDesafioHome() {
   document.getElementById('desafio-dias-restantes').textContent = getDiasRestantes();
 
   if (currentUser) {
-    const snap = await getDoc(doc(db, 'usuarios', currentUser.uid));
+    const snap = await db.collection('usuarios'.get().doc(currentUser.uid));
     const completados = snap.data()?.desafiosCompletados || {};
     const btn = document.getElementById('desafio-home-btn');
     if (completados[semanaIdx]) {
@@ -1534,7 +1543,7 @@ async function cargarDesafioFull() {
   document.getElementById('desafio-full-versiculo').textContent = d.versiculo;
 
   if (currentUser) {
-    const snap = await getDoc(doc(db, 'usuarios', currentUser.uid));
+    const snap = await db.collection('usuarios'.get().doc(currentUser.uid));
     const completados = snap.data()?.desafiosCompletados || {};
     const btn = document.getElementById('desafio-full-btn');
     if (completados[semanaIdx]) {
@@ -1562,8 +1571,8 @@ async function cargarDesafioFull() {
 window.toggleDesafio = async function() {
   if (!currentUser) return;
   const semanaIdx = getSemanaActual();
-  const userRef = doc(db, 'usuarios', currentUser.uid);
-  const snap = await getDoc(userRef);
+  const userRef = db.collection('usuarios').doc(currentUser.uid);
+  const snap = await userRef.get();
   const completados = snap.data()?.desafiosCompletados || {};
 
   if (completados[semanaIdx]) {
@@ -1573,7 +1582,7 @@ window.toggleDesafio = async function() {
     showToast('¡Desafío completado! 🎉');
   }
 
-  await updateDoc(userRef, { desafiosCompletados: completados });
+  await userRef.update( { desafiosCompletados: completados });
   cargarDesafioHome();
   if (!document.getElementById('screen-desafio').classList.contains('hidden')) {
     cargarDesafioFull();
@@ -1608,7 +1617,7 @@ window.guardarDiario = async function() {
 
     if (currentUser) {
       const entrada = { texto, respuesta, fecha: new Date().toISOString() };
-      await addDoc(collection(db, 'usuarios', currentUser.uid, 'diario'), entrada);
+      await db.collection('usuarios').doc(currentUser.uid).collection('diario').add(entrada);
     }
 
     input.value = '';
@@ -1626,8 +1635,8 @@ async function cargarDiario() {
   if (!currentUser) return;
   const lista = document.getElementById('diario-lista');
   try {
-    const diarioCol = collection(db, 'usuarios', currentUser.uid, 'diario');
-    const snap = await getDocs(diarioCol);
+    const diarioCol = db.collection('usuarios').doc(currentUser.uid).collection('diario');
+    const snap = await diarioCol.get();
     if (snap.empty) {
       lista.innerHTML = '<p style="font-size:13px;color:var(--gris)">Todavía no hay entradas. Escribí tu primera reflexión arriba.</p>';
       return;
@@ -1690,10 +1699,10 @@ window.generateCode = async function() {
   code += '-';
   for (let i = 0; i < 4; i++) code += chars[Math.floor(Math.random() * chars.length)];
 
-  await setDoc(doc(db, 'codigos', code), {
+  await db.collection('codigos').doc(code).set({
     usado: false,
     email: null,
-    fechaCreacion: serverTimestamp()
+    fechaCreacion: firebase.firestore.FieldValue.serverTimestamp()
   });
 
   navigator.clipboard?.writeText(code).catch(() => {});
@@ -1711,6 +1720,7 @@ window.showToast = function(msg, duration = 3000) {
 
 // ── PWA INSTALL ──
 // PWA install - moved to separate script
+}); // end window.load
 </script>
 
 <!-- Manifest cargado desde manifest.json -->
